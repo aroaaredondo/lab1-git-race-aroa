@@ -29,7 +29,7 @@ class HelloControllerMVCTests {
     private lateinit var mockMvc: MockMvc
 
     @Test
-    fun `should return home page with default message`() {
+    fun `should return home page with default message in English`() {
         given(messageSource.getMessage(eq("app.message"), any<Array<Any>>(), any()))
             .willReturn("Test Message")
 
@@ -40,9 +40,36 @@ class HelloControllerMVCTests {
             .andExpect(model().attribute("message", "Test Message"))
             .andExpect(model().attribute("name", ""))
     }
+    
+    @Test
+    fun `should return home page with default message in Spanish`() {
+        given(messageSource.getMessage(eq("app.message"), any<Array<Any>>(), any()))
+            .willReturn("Mensaje de Prueba")
+
+        mockMvc.perform(get("/"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(view().name("welcome"))
+            .andExpect(model().attribute("message", "Mensaje de Prueba"))
+            .andExpect(model().attribute("name", ""))
+    }
+
+        @Test
+    fun `should return home page with default message in French`() {
+        given(messageSource.getMessage(eq("app.message"), any<Array<Any>>(), any()))
+            .willReturn("Message de Test")
+
+        mockMvc.perform(get("/"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(view().name("welcome"))
+            .andExpect(model().attribute("message", "Message de Test"))
+            .andExpect(model().attribute("name", ""))
+    }
+
 
     @Test
-    fun `should return home page with personalized message`() {
+    fun `should return home page with personalized message in English`() {
         given(messageSource.getMessage(eq("greeting"), any<Array<Any>>(), any()))
             .willReturn("Hello, Developer!")
 
@@ -55,7 +82,33 @@ class HelloControllerMVCTests {
     }
 
     @Test
-    fun `should return API response as JSON`() {
+    fun `should return home page with personalized message in Spanish`() {
+        given(messageSource.getMessage(eq("greeting"), any<Array<Any>>(), any()))
+            .willReturn("Hola, Developer!")
+
+        mockMvc.perform(get("/").param("name", "Developer"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(view().name("welcome"))
+            .andExpect(model().attribute("message", "Hola, Developer!"))
+            .andExpect(model().attribute("name", "Developer"))
+    }
+
+        @Test
+    fun `should return home page with personalized message in French`() {
+        given(messageSource.getMessage(eq("greeting"), any<Array<Any>>(), any()))
+            .willReturn("Bonjour, Developer!")
+
+        mockMvc.perform(get("/").param("name", "Developer"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(view().name("welcome"))
+            .andExpect(model().attribute("message", "Bonjour, Developer!"))
+            .andExpect(model().attribute("name", "Developer"))
+    }
+
+    @Test
+    fun `should return API response as JSON in English`() {
         given(messageSource.getMessage(eq("greeting"), any<Array<Any>>(), any()))
             .willReturn("Hello, Test!")
 
@@ -66,4 +119,30 @@ class HelloControllerMVCTests {
             .andExpect(jsonPath("$.message", equalTo("Hello, Test!")))
             .andExpect(jsonPath("$.timestamp").exists())
     }
+
+    @Test
+    fun `should return API response as JSON in Spanish`() {
+        given(messageSource.getMessage(eq("greeting"), any<Array<Any>>(), any()))
+            .willReturn("Hola, Test!")
+
+        mockMvc.perform(get("/api/hello").param("name", "Test"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.message", equalTo("Hola, Test!")))
+            .andExpect(jsonPath("$.timestamp").exists())
+    }
+
+    fun `should return API response as JSON in French`() {
+        given(messageSource.getMessage(eq("greeting"), any<Array<Any>>(), any()))
+            .willReturn("Bonjour, Test!")
+
+        mockMvc.perform(get("/api/hello").param("name", "Test"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.message", equalTo("Bonjour, Test!")))
+            .andExpect(jsonPath("$.timestamp").exists())
+    }
+
 }
